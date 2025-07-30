@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Khushi's Complaint & Compliment Portal 💌</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas id="hearts"></canvas>
+
+  <div class="container">
+    <h1>Welcome, my lil kitten &lt;3</h1>
+    <p>Submit your trouble, demands or umm compliments for me hehe 💗</p>
+
+    <div class="tabs">
+      <button onclick="switchTab('grievance')">😤 Complaint Box</button>
+      <button onclick="switchTab('compliment')">💖 Compliments (if you are satisfied with the princess treatment)</button>
+    </div>
+
+    <!-- Grievance Form -->
+    <div id="grievance" class="tab">
+      <form id="grievanceForm">
+        <input type="text" placeholder="What's the trouble today lil one? daddy's here for you" required>
+        <textarea placeholder="Tell Ashuuu what made your cute heart go low and sad or high and mad" required></textarea>
+
+        <label> My Lil wolf, today you are feeling like?
+          <select>
+            <option>🐱 My angry lil kitten</option>
+            <option>🐢 My Slow sad koala(hang onto me)</option>
+            <option>🧚‍♀️ My magical fairy(just wanna make kalesh for love)</option>
+            <option>😇 My Misunderstood prettty angel</option>
+            <option>🤡 i wanna beat you up</option>
+          </select>
+        </label>
+
+        <label> Low=I should be scared, Max=bring your fav ice cream? 🍦
+          <input type="range" min="1" max="5">
+        </label>
+
+        <label> Can Daddy fix it with love, khushi?
+          <div class="checkbox-group">
+            <label><input type="checkbox"> 💖 Yes</label>
+            <label><input type="checkbox"> 🙅‍♀️ No, Kaleshhhh first</label>
+            <label><input type="checkbox"> 🥺 Maybe… if you say sorry cutely</label>
+          </div>
+        </label>
+
+        <button type="submit">Send Complaint to HQ</button>
+      </form>
+
+      <div id="grievanceResponse" class="hidden">
+        <h2>Thank you, my lil one 💞</h2>
+        <p>Your emotional SOS has been sent to Ashmith 💌<br>
+        He’s currently working on it, (cutely) while thinking of how to fix it</p>
+        <button onclick="location.reload()">Anything else my love?</button>
+      </div>
+    </div>
+
+    <!-- Compliment Box -->
+    <div id="compliment" class="tab hidden">
+      <form id="complimentForm">
+        <textarea placeholder="Leave a sweet lil surprise for your ashuu, if he is doing good 💘" required></textarea>
+        <button type="submit">Send Compliment 💌</button>
+      </form>
+
+      <div id="complimentResponse" class="hidden">
+        <h2>He is gonna smile and blush like a baby now ❤️</h2>
+        <p>That compliment has been sent secretly 😚</p>
+        <button onclick="location.reload()">one more would make him melt hehe</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="hearts.js"></script>
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab').forEach(tab => tab.classList.add('hidden'));
+      document.getElementById(tabId).classList.remove('hidden');
+    }
+
+    document.getElementById('grievanceForm').addEventListener('submit', e => {
+      e.preventDefault();
+      document.getElementById('grievanceForm').style.display = 'none';
+      document.getElementById('grievanceResponse').classList.remove('hidden');
+    });
+
+    document.getElementById('complimentForm').addEventListener('submit', e => {
+      e.preventDefault();
+      document.getElementById('complimentForm').style.display = 'none';
+      document.getElementById('complimentResponse').classList.remove('hidden');
+    });
+  </script>
+</body>
+</html>
