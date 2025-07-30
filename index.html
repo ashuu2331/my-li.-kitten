@@ -5,6 +5,39 @@
   <title>Khushi's Complaint & Compliment Portal 💌</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow-y: auto;
+    }
+
+    .hidden { display: none; }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+      background-color: #ffe6f0;
+      border-radius: 15px;
+      box-shadow: 0 0 10px pink;
+    }
+
+    .confetti {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    h1, h2, p {
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
   <canvas id="hearts"></canvas>
@@ -20,29 +53,29 @@
 
     <!-- Grievance Form -->
     <div id="grievance" class="tab">
-      <form id="grievanceForm">
-        <input type="text" placeholder="What's the trouble today lil one? daddy's here for you" required>
-        <textarea placeholder="Tell Ashuuu what made your cute heart go low and sad or high and mad" required></textarea>
+      <form id="grievanceForm" action="https://formspree.io/f/xrbllzen" method="POST">
+        <input type="text" name="trouble" placeholder="What's the trouble today lil one? daddy's here for you" required>
+        <textarea name="details" placeholder="Tell Ashuuu what made your cute heart go low and sad or high and mad" required></textarea>
 
         <label> My Lil wolf, today you are feeling like?
-          <select>
+          <select name="mood">
             <option>🐱 My angry lil kitten</option>
             <option>🐢 My Slow sad koala(hang onto me)</option>
             <option>🧚‍♀️ My magical fairy(just wanna make kalesh for love)</option>
             <option>😇 My Misunderstood prettty angel</option>
-            <option>🤡 i wanna beat you up</option>
+            <option>🤡 I wanna beat you up</option>
           </select>
         </label>
 
-        <label> Low=I should be scared, Max=bring your fav ice cream? 🍦
-          <input type="range" min="1" max="5">
+        <label> Low = I should be scared, Max = bring your fav ice cream? 🍦
+          <input type="range" name="madness" min="1" max="5">
         </label>
 
-        <label> Can Daddy fix it with love, khushi?
+        <label> Can Daddy fix it with love, Khushi?
           <div class="checkbox-group">
-            <label><input type="checkbox"> 💖 Yes</label>
-            <label><input type="checkbox"> 🙅‍♀️ No, Kaleshhhh first</label>
-            <label><input type="checkbox"> 🥺 Maybe… if you say sorry cutely</label>
+            <label><input type="checkbox" name="canFix" value="Yes"> 💖 Yes</label>
+            <label><input type="checkbox" name="canFix" value="No"> 🙅‍♀️ No, Kaleshhhh first</label>
+            <label><input type="checkbox" name="canFix" value="Maybe"> 🥺 Maybe…</label>
           </div>
         </label>
 
@@ -59,8 +92,8 @@
 
     <!-- Compliment Box -->
     <div id="compliment" class="tab hidden">
-      <form id="complimentForm">
-        <textarea placeholder="Leave a sweet lil surprise for your ashuu, if he is doing good 💘" required></textarea>
+      <form id="complimentForm" action="https://formspree.io/f/xrbllzen" method="POST">
+        <textarea name="compliment" placeholder="Leave a sweet lil surprise for your ashuu 💘" required></textarea>
         <button type="submit">Send Compliment 💌</button>
       </form>
 
@@ -72,6 +105,8 @@
     </div>
   </div>
 
+  <canvas class="confetti hidden" id="confettiCanvas"></canvas>
+
   <script src="hearts.js"></script>
   <script>
     function switchTab(tabId) {
@@ -79,16 +114,77 @@
       document.getElementById(tabId).classList.remove('hidden');
     }
 
-    document.getElementById('grievanceForm').addEventListener('submit', e => {
+    function showHearts() {
+      const canvas = document.getElementById('confettiCanvas');
+      canvas.classList.remove('hidden');
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const hearts = [];
+      for (let i = 0; i < 100; i++) {
+        hearts.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: Math.random() * 10 + 5,
+          speed: Math.random() * 2 + 1
+        });
+      }
+
+      function drawHeart(x, y, size) {
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.bezierCurveTo(x, y - size / 2, x - size, y - size / 2, x - size, y);
+        ctx.bezierCurveTo(x - size, y + size, x, y + size * 1.5, x, y + size * 2);
+        ctx.bezierCurveTo(x, y + size * 1.5, x + size, y + size, x + size, y);
+        ctx.bezierCurveTo(x + size, y - size / 2, x, y - size / 2, x, y);
+        ctx.fillStyle = "#ff69b4";
+        ctx.fill();
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        hearts.forEach(h => {
+          drawHeart(h.x, h.y, h.size);
+          h.y += h.speed;
+          if (h.y > canvas.height) h.y = -20;
+        });
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+
+      setTimeout(() => canvas.classList.add('hidden'), 3000); // Hide after 3s
+    }
+
+    document.getElementById('grievanceForm').addEventListener('submit', function (e) {
       e.preventDefault();
-      document.getElementById('grievanceForm').style.display = 'none';
-      document.getElementById('grievanceResponse').classList.remove('hidden');
+      const form = e.target;
+
+      fetch(form.action, {
+        method: form.method,
+        body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      }).then(() => {
+        form.style.display = 'none';
+        document.getElementById('grievanceResponse').classList.remove('hidden');
+        showHearts();
+      });
     });
 
-    document.getElementById('complimentForm').addEventListener('submit', e => {
+    document.getElementById('complimentForm').addEventListener('submit', function (e) {
       e.preventDefault();
-      document.getElementById('complimentForm').style.display = 'none';
-      document.getElementById('complimentResponse').classList.remove('hidden');
+      const form = e.target;
+
+      fetch(form.action, {
+        method: form.method,
+        body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      }).then(() => {
+        form.style.display = 'none';
+        document.getElementById('complimentResponse').classList.remove('hidden');
+        showHearts();
+      });
     });
   </script>
 </body>
